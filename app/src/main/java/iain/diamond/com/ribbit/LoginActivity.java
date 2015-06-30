@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ public class LoginActivity extends ActionBarActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    supportRequestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
     setContentView(R.layout.activity_login);
 
     mSignUpTextView = (TextView) findViewById(R.id.signUpText);
@@ -46,10 +48,12 @@ public class LoginActivity extends ActionBarActivity {
         if (username.isEmpty() || password.isEmpty()) {
           displayMessage(getString(R.string.login_error_title), getString(R.string.login_error_message));
         } else {
-          // create new user
+          // login user
+          setSupportProgressBarIndeterminateVisibility(true);
           ParseUser.logInInBackground(username, password, new LogInCallback() {
             @Override
             public void done(ParseUser parseUser, ParseException e) {
+              setSupportProgressBarIndeterminateVisibility(false);
               if (e == null) {
                 // Success!
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
