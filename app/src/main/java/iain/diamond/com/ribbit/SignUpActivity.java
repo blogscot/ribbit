@@ -57,7 +57,7 @@ public class SignUpActivity extends ActionBarActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
               } else {
-                displayMessage(getString(R.string.sign_up_error_title), e.getMessage());
+               ParseUtils.displayMessage(SignUpActivity.this, getString(R.string.sign_up_error_title), e.getMessage());
               }
             }
           });

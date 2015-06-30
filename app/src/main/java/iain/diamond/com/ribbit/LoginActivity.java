@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.parse.LogInCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
@@ -46,7 +47,7 @@ public class LoginActivity extends ActionBarActivity {
         String password = mPassword.getText().toString().trim();
 
         if (username.isEmpty() || password.isEmpty()) {
-          displayMessage(getString(R.string.login_error_title), getString(R.string.login_error_message));
+          ParseUtils.displayMessage(LoginActivity.this, getString(R.string.login_error_title), getString(R.string.login_error_message));
         } else {
           // login user
           setSupportProgressBarIndeterminateVisibility(true);
@@ -61,7 +62,7 @@ public class LoginActivity extends ActionBarActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
               } else {
-                displayMessage(getString(R.string.login_error_title), e.getMessage());
+                ParseUtils.displayMessage(LoginActivity.this, getString(R.string.login_error_title), e.getMessage());
               }
             }
           });
@@ -76,15 +77,6 @@ public class LoginActivity extends ActionBarActivity {
         startActivity(intent);
       }
     });
-  }
-
-  private void displayMessage(String title, String message) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-    builder.setMessage(message)
-            .setTitle(title)
-            .setPositiveButton(android.R.string.ok, null);
-    AlertDialog dialog = builder.create();
-    dialog.show();
   }
 
   @Override
