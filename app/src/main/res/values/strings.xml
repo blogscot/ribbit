@@ -25,4 +25,6 @@
     <string name="menu_edit_friends_label">Edit Friends</string>
     <string name="menu_camera_label">Camera</string>
     <string name="title_activity_edit_friends">Edit Friends</string>
+    <string name="server_commication_error">Problem communicating with server</string>
+    <string name="generic_error_message">Error</string>
 </resources>
