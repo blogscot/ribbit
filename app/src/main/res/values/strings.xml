@@ -27,4 +27,14 @@
     <string name="title_activity_edit_friends">Edit Friends</string>
     <string name="server_commication_error">Problem communicating with server</string>
     <string name="generic_error_message">Error</string>
+    <string name="external_storage_error">There was a problem access your device\'s external storage</string>
+    <string name="storage_filesystem_failure">Failed to create directory.</string>
+
+    <string-array name="camera_choices">
+        <item>Take Picture</item>
+        <item>Take Video</item>
+        <item>Choose Picture</item>
+        <item>Choose Video</item>
+    </string-array>
+
 </resources>

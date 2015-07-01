@@ -10,10 +10,10 @@
             android:title="@string/menu_edit_friends_label">
       </item>
 
-      <!--<item android:id="@+id/action_camera"-->
-            <!--android:icon="@drawable/ic_action_camera"-->
-            <!--android:title="@string/menu_camera_label"-->
-            <!--android:showAsAction="withText">-->
-      <!--</item>-->
+      <item android:id="@+id/action_camera"
+            android:icon="@drawable/ic_action_camera"
+            android:title="@string/menu_camera_label"
+            app:showAsAction="always">
+      </item>
 
 </menu>

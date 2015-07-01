@@ -1,7 +1,12 @@
 package iain.diamond.com.ribbit;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,15 +17,112 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.parse.ParseUser;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
   private static final String TAG = MainActivity.class.getSimpleName();
+
+  public static final int TAKE_PHOTO_REQUEST = 0;
+  public static final int TAKE_VIDEO_REQUEST = 1;
+  public static final int CHOOSE_PHOTO_REQUEST = 2;
+  public static final int CHOOSE_VIDEO_REQUEST = 3;
+
+  public static final int MEDIA_TYPE_IMAGE = 4;
+  public static final int MEDIA_TYPE_VIDEO = 5;
+
+  protected Uri mMediaUri;
+
+  protected DialogInterface.OnClickListener mDialogListener = new DialogInterface.OnClickListener() {
+    @Override
+    public void onClick(DialogInterface dialog, int which) {
+
+      switch (which) {
+        case 0:
+          take_picture();
+          break;
+        case 1: // Take video
+          break;
+        case 2: // Choose picture
+          break;
+        case 3: // Choose video
+          break;
+        default:
+      }
+    }
+
+    private void take_picture() {
+      Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+      mMediaUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
+      if (mMediaUri == null) {
+        // display an error
+        Toast.makeText(MainActivity.this,
+                getString(R.string.external_storage_error), Toast.LENGTH_LONG).show();
+      } else {
+        takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mMediaUri);
+        startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST);
+      }
+    }
+
+      // To be safe, you should check that the SDCard is mounted
+      // using Environment.getExternalStorageState() before doing this.
+    private Uri getOutputMediaFileUri(int mediaType) {
+
+      if (isExternalStorageAvailable()) {
+        // get external storage directory
+        String appName = MainActivity.this.getString(R.string.app_name);
+        File mediaStorageDirectory =
+                new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                        appName);
+
+        // create subdirectory
+        if (!mediaStorageDirectory.exists()) {
+          if (!mediaStorageDirectory.mkdirs()) {
+            Log.e(TAG, getString(R.string.storage_filesystem_failure));
+            return null;
+          }
+        }
+
+        // create file
+        File mediaFile;
+        Date now = new Date();
+        String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.UK).format(now);
+        String path = mediaStorageDirectory.getPath() + File.separator;
+
+        if (mediaType == MEDIA_TYPE_IMAGE) {
+          mediaFile = new File(path + "IMG_" + timestamp + ".jpg");
+        } else if (mediaType == MEDIA_TYPE_VIDEO) {
+          mediaFile = new File(path + "VID_" + timestamp + ".mp4");
+        } else {
+          return null;
+        }
+
+        Log.d(TAG, "File: " + Uri.fromFile(mediaFile));
+        // return the file's uri
+        return Uri.fromFile(mediaFile);
+      }
+      return null;
+    }
+
+    private boolean isExternalStorageAvailable() {
+      String state = Environment.getExternalStorageState();
+      if (state.equals(Environment.MEDIA_MOUNTED)) {
+        return true;
+      }
+      return false;
+    }
+  };
+
+  
+
   /**
    * The {@link android.support.v4.view.PagerAdapter} that will provide
    * fragments for each of the sections. We use a
@@ -106,15 +208,24 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     // as you specify a parent activity in AndroidManifest.xml.
     int id = item.getItemId();
 
-    //noinspection SimplifiableIfStatement
-    if (id == R.id.action_logout) {
-      ParseUser.logOut();
-      navigateToLogin();
-    } else
-    if (id == R.id.action_edit_friends) {
-      Intent intent = new Intent(this, EditFriendsActivity.class);
-      startActivity(intent);
+    switch(id) {
+      case R.id.action_logout:
+        ParseUser.logOut();
+        navigateToLogin();
+        break;
+      case R.id.action_edit_friends:
+        Intent intent = new Intent(this, EditFriendsActivity.class);
+        startActivity(intent);
+        break;
+      case R.id.action_camera:
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setItems(R.array.camera_choices, mDialogListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        break;
+      default:
     }
+
 
     return super.onOptionsItemSelected(item);
   }
